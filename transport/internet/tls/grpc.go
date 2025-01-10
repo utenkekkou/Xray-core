@@ -3,11 +3,12 @@ package tls
 import (
 	"context"
 	gotls "crypto/tls"
-	utls "github.com/refraction-networking/utls"
-	"google.golang.org/grpc/credentials"
 	"net"
 	"net/url"
 	"strconv"
+
+	utls "github.com/refraction-networking/utls"
+	"google.golang.org/grpc/credentials"
 )
 
 // grpcUtlsInfo contains the auth information for a TLS authenticated connection.
@@ -64,7 +65,7 @@ func (c *grpcUtls) ClientHandshake(ctx context.Context, authority string, rawCon
 	conn := UClient(rawConn, cfg, c.fingerprint).(*UConn)
 	errChannel := make(chan error, 1)
 	go func() {
-		errChannel <- conn.Handshake()
+		errChannel <- conn.HandshakeContext(ctx)
 		close(errChannel)
 	}()
 	select {
